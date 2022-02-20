@@ -1,20 +1,14 @@
+using API.Extensions;
+using API.Helpers;
+using API.Middleware;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Infrastructure
+namespace API
 {
     public class Startup
     {
@@ -27,36 +21,116 @@ namespace Infrastructure
 
         public IConfiguration Configuration { get; }
 
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
-            });
-
-            //Add DbContext
+            //Add DbContext service
             services.AddDbContext<StoreContext>(options
                 => options.UseSqlServer(_config.GetConnectionString("DefaultConnection")));
+
+            #region moved Repository service
+            //add ProductRepository service
+            //services.AddScoped<IProductRepository, ProductRepository>();
+
+            //add GenericRepository service
+            //services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+            #endregion
+
+            //ApplicationSerice is a class Extend IServiceCollection
+            services.AddApplicationServices();
+
+            //add AutoMapper service
+            services.AddAutoMapper(typeof(MappingProfiles));
+
+            services.AddControllers();
+
+            #region moved Swagger service
+            /*
+            //add Swagger Service
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Sela Store API", Version = "v1" });
+            });
+            */
+            #endregion
+
+            services.AddSwaggerDocumentation();
+            #region moved override controller behavior service
+            //override controller behavior
+            /*
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = actionContext =>
+                {
+                    var errors = actionContext.ModelState
+                    .Where(e => e.Value.Errors.Count > 0)
+                    .SelectMany(x => x.Value.Errors)
+                    .Select(x => x.ErrorMessage).ToArray();
+
+                    var errorResponse = new ApiValidationErrorResponse
+                    {
+                        Errors = errors
+                    };
+
+                    return new BadRequestObjectResult(errorResponse);
+                };
+            });
+            */
+            #endregion
+
+            //add CORS service
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorePolicy", policy =>
+                {
+                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200");
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            #region
+            /*
+             * if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
             }
+            */
+            #endregion
+
+
+            //Add Custom Middleware
+            app.UseMiddleware<ExceptionMiddleware>();
+
+            //handle empty endpoints errors
+            app.UseStatusCodePagesWithReExecute("/errors/{0}");
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
+            //serve static Image Files in wwwroot files
+            app.UseStaticFiles();
+
+            //add CORS middleware
+            app.UseCors("CorePolicy");
+
+
             app.UseAuthorization();
+
+            #region moved swagger middlewares
+            //add swagger middlewares
+            app.UseSwagger();
+            app.UseSwaggerUI(c => {c.SwaggerEndpoint("/swagger/v1/swagger.json", "Sela Store API v1"); });
+            #endregion
+            app.UseSwaggerDocumentation();
 
             app.UseEndpoints(endpoints =>
             {

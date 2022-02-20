@@ -6,39 +6,89 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Core.Interfaces;
+using Core.Specifications;
+using API.Dtos;
+using AutoMapper;
+using API.Errors;
+using API.Helpers;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ProductsController : ControllerBase
-    {
-        private readonly StoreContext _context;
 
-        public ProductsController(StoreContext context)
+    //Drive ProductsController from BaseApiController
+    public class ProductsController : BaseApiController
+    {
+        private readonly IGenericRepository<Product> _productRepo;
+        private readonly IGenericRepository<ProductBrand> _productBrandRepo;
+        private readonly IGenericRepository<ProductType> _productTypeRepo;
+        private readonly IMapper _mapper;
+
+        public ProductsController(IGenericRepository<Product> productRepo, IGenericRepository<ProductBrand> productBrandRepo,
+            IGenericRepository<ProductType> productTypeRepo, IMapper mapper)
         {
-            _context = context;
+            _productRepo = productRepo;
+            _productBrandRepo = productBrandRepo;
+            _productTypeRepo = productTypeRepo;
+            _mapper = mapper;
         }
 
+
        [HttpGet]
-       public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
-       {
-            var products = await _context.Products.ToListAsync();
+       public async Task<ActionResult<Pagination<ProductToReturnDto>>> GetProducts([FromQuery] ProductSpecParams productParams)
+        {
+            //get products with types and brands with spec
+            var spec = new ProductWithTypesAndBrandsSpecification(productParams);
+
+            //then get count specs
+            var countSpec = new ProductWithFiltersForCountSpecification(productParams);
+
+            //get total item
+            var totalItems = await _productRepo.CountAsync(countSpec);
+
+            //return all products
+            var products = await _productRepo.ListAsync(spec);
+
+            var data = _mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products);
+
+
             if (products == null)
                 return NotFound();
 
-            return Ok(products);
+            return Ok(new Pagination<ProductToReturnDto>(productParams.PageIndex, productParams.PageSize, totalItems, data));
        }
+
+
+
+
 
        [HttpGet("{id}")]
-       public async Task<ActionResult<Product>> GetProduct(int id)
+       [ProducesResponseType(StatusCodes.Status200OK)]
+       [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ProductToReturnDto>> GetProduct(int id)
        {
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
-                return NotFound($"The product with id {id} Not Exist");
+            var spec = new ProductWithTypesAndBrandsSpecification(id);
 
-            return Ok(product);
+            var product = await _productRepo.GetEntityWithSpec(spec);
+
+            if (product == null) return NotFound(new ApiResponse(404));
+
+            //if (product == null)
+            //    return NotFound($"The product with id {id} Not Exist");
+
+            return _mapper.Map<Product, ProductToReturnDto>(product);
        }
 
+        [HttpGet("brands")]
+        public async Task<ActionResult<IReadOnlyList<ProductBrand>>> GetProductBrands()
+        {
+            return  Ok(await _productBrandRepo.ListAllAsync());
+        }
+
+        [HttpGet("types")]
+        public async Task<ActionResult<IReadOnlyList<ProductType>>> ProductTypes()
+        {
+            return Ok(await _productTypeRepo.ListAllAsync());
+        }
     }
 }
