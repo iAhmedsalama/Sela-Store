@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CoreModule } from './core/core.module';
 import { ShopModule } from './shop/shop.module';
+import { HomeModule } from './home/home.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -17,8 +18,7 @@ import { ShopModule } from './shop/shop.module';
     HttpClientModule,
     //import core module which nav-bar lives in
     CoreModule, 
-    //import shop module which products lives in
-    ShopModule
+    HomeModule
   ],
   providers: [],
   bootstrap: [AppComponent],
