@@ -4,6 +4,7 @@ import { IProduct } from '../shared/models/product';
 import { IType } from '../shared/models/productTypes';
 import { ShopService } from './shop.service';
 import { ShopParams } from './../shared/models/shopParams';
+import { IPagination } from '../shared/models/pagination';
 
 @Component({
   selector: 'app-shop',
@@ -11,29 +12,24 @@ import { ShopParams } from './../shared/models/shopParams';
   styleUrls: ['./shop.component.scss'],
 })
 export class ShopComponent implements OnInit {
-
   //adding search properites
-  @ViewChild('search', {static:true}) searchTerm?: ElementRef
+  @ViewChild('search', { static: true }) searchTerm?: ElementRef;
 
   products?: IProduct[] = [];
   brands: IBrand[] = [];
   types: IType[] = [];
 
-  //filtering properties
-  brandIdSelected = 0;
-  typeIdSelected = 0;
+  //filtering and sorting properties from shop params class
+  shopParams = new ShopParams();
 
-  //sorting properties
-  sortSelected?:string = 'name';
+  //pagination count
+  totalCount?: number;
+
   sortOptions = [
     { name: 'Alphabetical', value: 'name' },
     { name: 'Price: Low to High', value: 'priceAsc' },
     { name: 'Price: High to Low', value: 'priceDesc' },
   ];
-
-
-  //adding shop params module
-  shopParams = new ShopParams();
 
   //inject shop service
   constructor(private ShopService: ShopService) {}
@@ -46,10 +42,15 @@ export class ShopComponent implements OnInit {
   }
 
   getProducts() {
-    this.ShopService.getProducts(this.brandIdSelected, this.typeIdSelected, this.sortSelected).subscribe(
-      response => {
+    this.ShopService.getProducts(this.shopParams).subscribe(
+      (response) => {
         this.products = response?.data;
-      },error => {
+        //adding pagination properties
+        this.shopParams.pageNumber = response?.pageIndex;
+        this.shopParams.pageSize = response?.pageSize;
+        this.totalCount = response?.count;
+      },
+      (error) => {
         console.log(error);
       }
     );
@@ -58,10 +59,11 @@ export class ShopComponent implements OnInit {
   //filtering methods
   getBrands() {
     this.ShopService.getBrands().subscribe(
-      response => {
+      (response) => {
+        //adding All to cancel filtering
         this.brands = [{ id: 0, name: 'All' }, ...response];
       },
-      error => {
+      (error) => {
         console.log(error);
       }
     );
@@ -69,44 +71,59 @@ export class ShopComponent implements OnInit {
 
   getTypes() {
     this.ShopService.getTypes().subscribe(
-      response => {
+      (response) => {
+        //adding All to cancel filtering
         this.types = [{ id: 0, name: 'All' }, ...response];
       },
-      error => {
+      (error) => {
         console.log(error);
       }
     );
   }
 
   onBrandSelected(brandId: number) {
-    this.brandIdSelected = brandId;
+    this.shopParams.brandId = brandId;
+
+    //reseting page number to page number 1 after using brand filter
+    this.shopParams.pageNumber = 1;
     this.getProducts();
   }
 
   onTypeSelected(typeId: number) {
-    this.typeIdSelected = typeId;
+    this.shopParams.typeId = typeId;
+
+    //reseting page number to page number 1 after using type filter
+    this.shopParams.pageNumber = 1;
     this.getProducts();
   }
 
   //sorting methods
   onSortSelected(sort: string) {
-    this.sortSelected = sort;
+    this.shopParams.sort = sort;
     this.getProducts();
   }
 
   //pagination method
-  onPageChanged(event: any){
-  
+  onPageChanged(event: any) {
+    //the onPagechanged fires every time totalCount changed 
+    //check if it fires or not
+    if (this.shopParams.pageNumber !==event) {
+      this.shopParams.pageNumber = event;
+      this.getProducts();
+    }
   }
 
   //search method
-  onSearch(){
+  onSearch() {
     this.shopParams.search = this.searchTerm?.nativeElement.value;
+
+    //reseting page number to page number 1 after using search filter
+    this.shopParams.pageNumber = 1;
     this.getProducts();
   }
 
-  onRest(){
-    this.searchTerm?.nativeElement.value;
+  onRest() {
+    this.searchTerm.nativeElement.value = '';
     this.shopParams = new ShopParams();
     this.getProducts();
   }

@@ -4,7 +4,8 @@ import { IPagination } from '../shared/models/pagination';
 import { IBrand } from '../shared/models/brand';
 import { IType } from '../shared/models/productTypes';
 import { map } from 'rxjs/operators';
-
+import { ShopParams } from './../shared/models/shopParams';
+import { IProduct } from './../shared/models/product';
 
 //shop service to inject our service in [shop.component] it instead of inject service in [app.component]
 @Injectable({
@@ -15,37 +16,54 @@ export class ShopService {
 
   constructor(private http: HttpClient) {}
 
-  getProducts(brandId?: number, typeId?: number, sort?:string) {
-
+  getProducts(shopParams: ShopParams) {
     let params = new HttpParams();
 
-    if (brandId) {
-      params = params.append('brandId', brandId.toString());
+    //adding filtering by brand id
+    if (shopParams.brandId !== 0) {
+      params = params.append('brandId', shopParams.brandId.toString());
     }
 
-    if (typeId) {
-      params = params.append('typeId', typeId.toString());
-    }
-    if (sort) {
-      params = params.append('sort', sort);
+    //adding filtering by type id
+    if (shopParams.typeId !== 0) {
+      params = params.append('typeId', shopParams.typeId.toString());
     }
 
-   
-    return this.http.get<IPagination>(this.baseUrl + 'products', {
-      observe: 'response',
-      params,
-    }).pipe(
-      map(response => {
-        return response.body;
+    //adding sorting functionality
+    params = params.append('sort', shopParams.sort);
+
+    //adding pagination functionality
+    params = params.append('pageIndex', shopParams.pageNumber.toString());
+    params = params.append('pageIndex', shopParams.pageSize.toString());
+
+    //adding search functionality
+    if (shopParams.search) {
+      params = params.append('search', shopParams.search);
+    }
+    return this.http
+      .get<IPagination>(this.baseUrl + 'products', {
+        observe: 'response',
+        params,
       })
-    )
+      .pipe(
+        map((response) => {
+          return response.body;
+        })
+      );
   }
 
+  //get brands method
   getBrands() {
     return this.http.get<IBrand[]>(this.baseUrl + 'products/brands');
   }
 
+  //get types method
   getTypes() {
     return this.http.get<IType[]>(this.baseUrl + 'products/types');
+  }
+
+  //get product by id
+  getProduct(id: number){
+    return this.http.get<IProduct>(this.baseUrl + 'products/' + id);
   }
 }

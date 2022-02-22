@@ -3,14 +3,14 @@
     <img src="{{product.pictureUrl}}" alt="{{product.name}}" class="img-fluid bg-light">
  
     <div class="card-body d-flex flex-column">
-        <a href="#" class="text-decoration-none">
-            <h6 class="text-upper-case">{{product.name}}</h6>
+        <a routerLink="/shop/{{product.id}}" class="text-decoration-none">
+            <h6 class="text-upper-case">{{product.name}} </h6>
         </a>
-        <span class="mb-2">{{product.price | currency}}</span>
+        <span class="mb-2"> {{product.price | currency}} </span>
         
         <div class="btn-group">
             <button type="button" class="btn btn btn-outline-secondary fa fa-shopping-cart "></button>
-            <button type="button" class="btn btn btn-outline-secondary ">View</button>
+            <button type="button" class="btn btn btn-outline-secondary" routerLink="/shop/{{product.id}} ">View</button>
         </div>
         
     </div>
