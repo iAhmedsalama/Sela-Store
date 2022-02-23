@@ -1,0 +1,36 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-2 col-sm-6">
+            
+        </div>
+    </div>
+  <button
+    type="button"
+    class="btn btn-outline-primary mx-3"
+    (click)="get500Error()"
+  >
+    Test 500 Error
+  </button>
+  <button type="button" class="btn btn-outline-primary" (click)="get404Error()">
+    Test 404 Error
+  </button>
+  <button
+    type="button"
+    class="btn btn-outline-primary mx-3"
+    (click)="get400Error()"
+  >
+    Test 400 Error
+  </button>
+  <button
+    type="button"
+    class="btn btn-outline-primary"
+    (click)="get400ValidationError()"
+  >
+    Test 400 validation Error
+  </button>
+  <div class="row mt-5" *ngIf="validationErrors">
+    <ul class="text-danger">
+      <li *ngFor="let error of validationErrors">{{error.id}}</li>
+    </ul>
+  </div>
+</div>

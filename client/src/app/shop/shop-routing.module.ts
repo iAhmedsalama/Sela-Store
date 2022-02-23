@@ -5,7 +5,7 @@ import { ShopComponent } from './shop.component';
 import { ProductDetailsComponent } from './product-details/product-details.component';
 
 
-//lazey loading
+//lazey loading for routing is activated
 const routes: Routes =[
   { path: '', component: ShopComponent },
   { path: 'shop/:id', component: ProductDetailsComponent },
