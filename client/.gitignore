@@ -12,6 +12,10 @@ ssl
 npm-debug.log
 yarn-error.log
 
+#images
+doc/**/*.jpg
+doc/**/*.png
+
 # IDEs and editors
 .idea/
 .project

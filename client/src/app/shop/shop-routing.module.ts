@@ -4,20 +4,16 @@ import { Routes, RouterModule } from '@angular/router';
 import { ShopComponent } from './shop.component';
 import { ProductDetailsComponent } from './product-details/product-details.component';
 
-
 //lazey loading for routing is activated
-const routes: Routes =[
+const routes: Routes = [
   { path: '', component: ShopComponent },
-  { path: 'shop/:id', component: ProductDetailsComponent },
+  //using an alias that breadcrumb will get the name of product from it
+  { path: ':id', component: ProductDetailsComponent, data:{breadcrumb: {alias: 'productDetails'}}},
 ];
 
 @NgModule({
   declarations: [],
-  imports: [
-    RouterModule.forChild(routes)
-  ],
-  exports:[
-    RouterModule
-  ]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-export class ShopRoutingModule { }
+export class ShopRoutingModule {}

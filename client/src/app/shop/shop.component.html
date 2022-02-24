@@ -1,11 +1,11 @@
-<div class="container">
+<div class="container mt-3">
     <div class="row">
         <!-- Filters -->
-        <section class="col-3">
+        <section class="col-md-3 col-sm-12">
 
-            <h5 class="text-warning ml-3">Sorts</h5>
-            <div class="form-group">
-                <select class="custom-select" (change)="onSortSelected($event.target.value)">
+            <h5 class="text-warning ml-3 mt-4 mb-3">Sorts</h5>
+            <div class="form-group col-md-3 col-sm-12">
+                <select class="custom-select mb-4" (change)="onSortSelected($event.target.value)">
                     <option *ngFor="let sort of sortOptions"
                     [value]="sort.value"
                 >
@@ -44,8 +44,8 @@
         </section>
 
         <!-- Main Content -->
-        <section class="col-9">
-           <div class="d-flex justify-content-between align-items-center pb-2">
+        <section class="col-md-9">
+           <div class="d-flex justify-content-between align-items-center pb-2 col-md-12 col-sm-12">
 
                <!-- paging header -->
                 <app-paging-header
@@ -55,26 +55,28 @@
                 [pageNumber]="this.shopParams.pageNumber"
                 ></app-paging-header>
 
-                <div class="d-flex justify-content-between align-items-center mt-2 ">
+                
+                <div class="d-flex justify-content-between align-items-center ">
 
                     <input type="text" class="form-control mx-5" style="width: 300px;" placeholder="Search"
-                     #search
-                     (keyup.enter)="onSearch()"
-                     >
+                    #search
+                    (keyup.enter)="onSearch()"
+                    >
 
                     <button class="btn btn-outline-primary mx-2" (click)="onSearch()" >Search</button>
                     <button class="btn btn-outline-success my-2" (click)="onRest()">Reset</button>
                 </div>
+                
            </div>
 
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-              <div class="col-4" *ngFor="let item of products">
+              <div class="col-md-4 col-sm-12" *ngFor="let item of products">
                 <!-- product item -->
                 <app-product-item [product]="item"></app-product-item>
               </div>
             </div>
 
-            <div class="d-flex justify-content-center" *ngIf="totalCount > 0">
+            <div class="d-flex justify-content-center mt-2" *ngIf="totalCount > 0">
                 
                 <!-- pagination component -->
                 <app-pager

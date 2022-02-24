@@ -8,6 +8,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CoreModule } from './core/core.module';
 import { HomeModule } from './home/home.module';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { LoadingInterceptor } from './core/interceptors/loading.interceptors';
+
 
 @NgModule({
   declarations: [AppComponent],
@@ -18,11 +21,14 @@ import { ErrorInterceptor } from './core/interceptors/error.interceptor';
     HttpClientModule,
     //import core module which nav-bar lives in
     CoreModule, 
-    HomeModule
+    HomeModule,
+    NgxSpinnerModule
+
   ],
   providers: [
     //providing error interceptor to app module
-    {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true}
+    {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true}
   ],
   bootstrap: [AppComponent],
 })
