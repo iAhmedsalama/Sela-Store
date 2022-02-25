@@ -17,6 +17,8 @@ namespace API.Extensions
             //add GenericRepository service
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
+            //adding basket service
+            services.AddScoped<IBasketRepository, BasketRepository>();
 
             //override controller behavior
             services.Configure<ApiBehaviorOptions>(options =>
