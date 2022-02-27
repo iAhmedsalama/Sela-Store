@@ -28,6 +28,7 @@ import { LoadingInterceptor } from './core/interceptors/loading.interceptors';
   providers: [
     //providing error interceptor to app module
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
+    //providing loading functionality 
     {provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true}
   ],
   bootstrap: [AppComponent],

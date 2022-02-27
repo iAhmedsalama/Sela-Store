@@ -13,8 +13,18 @@ const routes: Routes = [
   { path: 'not-found', component: NotFoundComponent, data:{breadcrumb: 'Not Found'}},
   
   //lazy loading shop module will loaded when shop path is activated
-  { path: 'shop', loadChildren:() => import('./shop/shop.module').then(mod => mod.ShopModule), data:{breadcrumb: 'Shop'}},
-  { path: '**', redirectTo: 'not-found', pathMatch: 'full'}
+  { path: 'shop', loadChildren:() => import('./shop/shop.module').then(mod => mod.ShopModule),
+   data:{breadcrumb: 'Shop'}},
+
+  //lazy loading basket module will loaded when shop path is activated
+  { path: 'basket', loadChildren:() => import('./basket/basket.module').then(mod => mod.BasketModule),
+   data:{breadcrumb: 'Basket'}},
+
+    //lazy loading checkout module will loaded when shop path is activated
+  { path: 'checkout', loadChildren:() => import('./checkout/checkout.module').then(mod => mod.CheckoutModule),
+  data:{breadcrumb: 'Checkout'}},
+   
+   { path: '**', redirectTo: 'not-found', pathMatch: 'full'}
 ];
 
 @NgModule({

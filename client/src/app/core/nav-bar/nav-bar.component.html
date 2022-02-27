@@ -12,9 +12,9 @@ border-bottom container-fluid  fixed-top bg-white">
     </nav>
 
     <div class="d-flex align-items-center">
-      <a class="position-relative mx-5">
+      <a routerLink="/basket" class="position-relative mx-5">
           <i class="fa fa-shopping-cart fa-2x mr-5 text-dark"></i>
-          <div class="cart-no">5</div>
+          <div class="cart-no" *ngIf="(basket$ | async) as basket">{{basket.items.length}}</div>
       </a>
       <a class="mx-3 py-2 btn btn-outline-secondary mr-2">Logn in</a>
       <a class="mx-3 py-2 btn btn-outline-secondary mr-3">Sign up</a>
