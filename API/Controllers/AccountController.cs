@@ -35,8 +35,6 @@ namespace API.Controllers
         [Authorize]
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         {
-            //get user email
-            //var email = HttpContext.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
 
             var user = await _userManager.FindByEmailFromClaimsPrincipal(HttpContext.User);
 
@@ -62,8 +60,6 @@ namespace API.Controllers
         [HttpGet("address")]
         public async Task<ActionResult<AddressDto>> GetUserAddress()
         {
-            //get user email
-            //var email = HttpContext.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
 
             var user = await _userManager.FindUserByClaimsPrincipalWithAddressAsync(HttpContext.User);
 
@@ -71,6 +67,7 @@ namespace API.Controllers
             return _mapper.Map<Address, AddressDto>(user.Address);
         }
 
+        //update address method
         [Authorize]
         [HttpPut("address")]
         public async Task<ActionResult<AddressDto>> UpdateUserAddress(AddressDto address)
@@ -86,6 +83,7 @@ namespace API.Controllers
             if (result.Succeeded) return Ok(_mapper.Map<Address, AddressDto>(user.Address));
             return BadRequest("updating user have problem");
         }
+
 
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
@@ -109,6 +107,20 @@ namespace API.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
+            //check if mail is already exists RegisterDto
+
+            if (CheckEmailExistsAsync(registerDto.Email).Result.Value)
+            {
+                return new BadRequestObjectResult(new ApiValidationErrorResponse
+                {
+                    Errors = new[]
+                    {
+                        "Email address is in use"
+                    }
+                });
+            }
+
+            //if user is not exists create new
             var user = new AppUser
             {
                 DisplayName = registerDto.DisplayName,
