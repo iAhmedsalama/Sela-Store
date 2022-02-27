@@ -2,6 +2,7 @@ using API.Extensions;
 using API.Helpers;
 using API.Middleware;
 using Infrastructure.Data;
+using Infrastructure.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -42,6 +43,9 @@ namespace API
 
             //ApplicationSerice is a class Extend IServiceCollection
             services.AddApplicationServices();
+
+            //adding identity service
+            services.AddIdentityServices(_config);
 
             //add AutoMapper service
             services.AddAutoMapper(typeof(MappingProfiles));
@@ -98,6 +102,12 @@ namespace API
 
                 return ConnectionMultiplexer.Connect(configration);
             });
+
+            //adding Identity Dbcontext service
+            services.AddDbContext<AppIdentityDbContext>(options =>
+            {
+                options.UseSqlServer(_config.GetConnectionString("IdentityConnection"));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -131,6 +141,8 @@ namespace API
             //add CORS middleware
             app.UseCors("CorePolicy");
 
+            //adding Authentication service
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
