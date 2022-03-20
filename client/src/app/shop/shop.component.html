@@ -17,7 +17,7 @@
 
        
             <h5 class="text-warning ml-3">Brands</h5>
-            <ul class="list-group my-3">
+            <ul class="list-group my-3"  style="cursor: pointer;">
                 <li class="list-group-item " aria-current="true"
                  *ngFor="let brand of brands"
                  [class.active]="brand.id === this.shopParams.brandId"
@@ -30,7 +30,7 @@
 
             <h5 class="text-warning ml-3">Types</h5>
 
-            <ul class="list-group my-3">
+            <ul class="list-group my-3"  style="cursor: pointer;">
                 <li class="list-group-item" aria-current="true"
                  *ngFor="let type of types"
                  [class.active]="type.id === this.shopParams.typeId"
@@ -49,7 +49,6 @@
 
                <!-- paging header -->
                 <app-paging-header
-                
                 [totalCount]="totalCount"
                 [pageSize]="this.shopParams.pageSize"
                 [pageNumber]="this.shopParams.pageNumber"

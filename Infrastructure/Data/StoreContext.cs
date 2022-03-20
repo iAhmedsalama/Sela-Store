@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.Entities.OrderAggregate;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Reflection;
@@ -17,13 +18,16 @@ namespace Infrastructure.Data
 
         public DbSet<ProductType> ProductTypes { get; set; }
 
+        //adding order Aggregation DBSets
+        public DbSet<Order> Orders { get; set; }
 
+        public DbSet<OrderItem> OrderItems { get; set; }
+
+        public DbSet<DeliveryMethod> DeliveryMethods { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
-
             modelBuilder.Entity<Product>().Property(p => p.Id).IsRequired();
             modelBuilder.Entity<Product>().Property(p => p.Name).IsRequired().HasMaxLength(100);
 
@@ -38,6 +42,12 @@ namespace Infrastructure.Data
 
             modelBuilder.Entity<Product>().HasOne(t => t.ProductType).WithMany()
                 .HasForeignKey(p => p.ProductTypeId);
+
+            //adding configration for order aggregate
+            modelBuilder.Entity<Address>().HasNoKey();
+            modelBuilder.Entity<ProductItemOrdered>().HasNoKey();
+
+
 
             base.OnModelCreating(modelBuilder);
 

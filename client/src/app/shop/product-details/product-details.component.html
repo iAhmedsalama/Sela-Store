@@ -9,23 +9,42 @@
       />
     </div>
     <div class="col-md-6">
-      <h3>{{product.name}}</h3>
+      <h3>{{ product.name }}</h3>
       <p>{{ product.price | currency }}</p>
-  
+
       <div class="d-flex justify-conent-start align-items-center">
-          <i class="fa fa-minus-circle text-warning mx-2" style="cursor: pointer; font-size: 2em;" (click)="decrementQuantity()"></i>
-          <span class="font-weight-bold" style="font-size: 1.5em;">{{quantity}}</span>
-          <i class="fa fa-plus-circle text-warning mx-2" style="cursor: pointer; font-size: 2em;" (click)="incrementQuantity()"></i>
-          <button class="btn btn-outline-secondary btn-lg ml-4" (click)="addItemToBasket()"> Add to Cart</button>
+        <i
+          class="fa fa-minus-circle text-warning mx-2"
+          style="cursor: pointer; font-size: 2em"
+          (click)="decrementQuantity()"
+        ></i>
+        <span class="font-weight-bold" style="font-size: 1.5em">{{
+          quantity
+        }}</span>
+        <i
+          class="fa fa-plus-circle text-warning mx-2"
+          style="cursor: pointer; font-size: 2em"
+          (click)="incrementQuantity()"
+        ></i>
+        <button
+          class="btn btn-outline-secondary btn-lg ml-4"
+          (click)="addItemToBasket()"
+        >
+          Add to Cart
+        </button>
       </div>
-  
+
       <div class="row mt-5">
-          <div class="col-12 ml-3">
-              <h4>Description</h4>
-              <p>{{product.description}}</p>
-          </div>
+        <div class="col-12 ml-3">
+          <h4>Description</h4>
+          <p>{{ product.description }}</p>
+        </div>
       </div>
     </div>
   </div>
+  <p>
+    Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur
+    distinctio architecto deleniti enim excepturi labore atque quam animi sint
+    expedita?
+  </p>
 </div>
-

@@ -24,7 +24,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="Indentity\" />
 	  <Folder Include="Migrations\" />
-	  <Folder Include="Data\SeedData\" />
 	</ItemGroup>
 </Project>
