@@ -24,19 +24,19 @@ namespace API
         public IConfiguration Configuration { get; }
 
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        // This method gets called by the runtime. Use this method to Adding services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
 
-            //Add DbContext service
+            //Adding DbContext service
             services.AddDbContext<StoreContext>(options
                 => options.UseSqlServer(_config.GetConnectionString("DefaultConnection")));
 
             #region moved Repository service
-            //add ProductRepository service
+            //Adding ProductRepository service
             //services.AddScoped<IProductRepository, ProductRepository>();
 
-            //add GenericRepository service
+            //Adding GenericRepository service
             //services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
             #endregion
@@ -44,17 +44,17 @@ namespace API
             //ApplicationSerice is a class Extend IServiceCollection
             services.AddApplicationServices();
 
-            //adding identity service
+            //Adding identity service
             services.AddIdentityServices(_config);
 
-            //add AutoMapper service
+            //Adding AutoMapper service
             services.AddAutoMapper(typeof(MappingProfiles));
 
             services.AddControllers();
 
             #region moved Swagger service
             /*
-            //add Swagger Service
+            //Adding Swagger Service
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Sela Store API", Version = "v1" });
@@ -86,7 +86,7 @@ namespace API
             */
             #endregion
 
-            //add CORS service
+            //Adding CORS service
             services.AddCors(options =>
             {
                 options.AddPolicy("CorePolicy", policy =>
@@ -95,7 +95,7 @@ namespace API
                 });
             });
 
-            //adding Redis services
+            //Adding Redis services
             services.AddSingleton<IConnectionMultiplexer>(c => {
 
                 var configration = ConfigurationOptions.Parse(_config.GetConnectionString("Redis"), true);
@@ -103,11 +103,22 @@ namespace API
                 return ConnectionMultiplexer.Connect(configration);
             });
 
-            //adding Identity Dbcontext service
+            //Adding Identity Dbcontext service
             services.AddDbContext<AppIdentityDbContext>(options =>
             {
                 options.UseSqlServer(_config.GetConnectionString("IdentityConnection"));
             });
+
+            
+            #region Adding google authentication
+            //services.addauthentication()
+            //    .addgoogle(options =>
+            //    {
+            //        iconfigurationsection googleauthsection = configuration.getsection("authentication:google");
+            //        options.clientid = googleauthsection["client_id"];
+            //        options.clientsecret = googleauthsection["client_secret"];
+            //    }); 
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -125,7 +136,7 @@ namespace API
             #endregion
 
 
-            //Add Custom Middleware
+            //Adding Custom Middleware
             app.UseMiddleware<ExceptionMiddleware>();
 
             //handle empty endpoints errors
@@ -138,16 +149,16 @@ namespace API
             //serve static Image Files in wwwroot files
             app.UseStaticFiles();
 
-            //add CORS middleware
+            //Adding CORS middleware
             app.UseCors("CorePolicy");
 
-            //adding Authentication service
+            //Adding Authentication service
             app.UseAuthentication();
 
             app.UseAuthorization();
 
             #region moved swagger middlewares
-            //add swagger middlewares
+            //Adding swagger middlewares
             app.UseSwagger();
             app.UseSwaggerUI(c => {c.SwaggerEndpoint("/swagger/v1/swagger.json", "Sela Store API v1"); });
             #endregion

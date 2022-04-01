@@ -44,48 +44,19 @@ namespace Infrastructure.Data
                 .HasForeignKey(p => p.ProductTypeId);
 
             //adding configration for order aggregate
-            modelBuilder.Entity<Address>().HasNoKey();
-            modelBuilder.Entity<ProductItemOrdered>().HasNoKey();
 
+            modelBuilder.Entity<Order>()
+                .OwnsOne(o => o.ShipToAddress);
+
+            modelBuilder.Entity<OrderItem>()
+                .OwnsOne(oi => oi.ItemOrdered);
 
 
             base.OnModelCreating(modelBuilder);
 
-
-
-            #region coversion from decimal to double in other database types
-            /*
-            if (Database.ProviderName == "Microsoft.EntityFramworkCore.SqlServer")
-            {
-                foreach (var entityType in modelBuilder.Model.GetEntityTypes())
-                {
-                    var properties = entityType.ClrType.GetProperties().Where(p => p.PropertyType == typeof(decimal));
-
-
-                    foreach (var property in properties)
-                    {
-                        modelBuilder.Entity(entityType.Name).Property(property.Name)
-                            .HasConversion<double>();
-                    }
-                }
-            }
-            */
-            #endregion
+           
 
         }
-
-
-        #region add new configration using model builder in another file
-        //add new configration using model builder in another file 
-        /*
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-
-            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-        }
-        */
-        #endregion
 
 
     }

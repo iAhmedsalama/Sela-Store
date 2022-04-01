@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -29,20 +30,22 @@ namespace Core.Entities.OrderAggregate
 
         public DateTimeOffset OrderDate { get; set; } = DateTimeOffset.Now;
 
-        //dependent entity
-        [NotMapped]
+        //Owned Entity
         public Address ShipToAddress { get; set; }
 
+        //Owned Entity
         public DeliveryMethod DeliveryMethod { get; set; }
-        [NotMapped]
+
 
         public IReadOnlyList<OrderItem> OrderItems { get; set; }
 
         //totalItems + Quantity
+        [Column(TypeName = "money")]
         public decimal Subtotal { get; set; }
 
         public OrderStatus Status { get; set; } = OrderStatus.Pending;
 
+ 
         public string PaymentItentId { get; set; }
 
         public decimal GetTotal()

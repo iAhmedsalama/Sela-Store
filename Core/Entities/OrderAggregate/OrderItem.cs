@@ -19,9 +19,10 @@ namespace Core.Entities.OrderAggregate
             Price = price;
             Quantity = quantity;
         }
-        [NotMapped]
+
         public ProductItemOrdered ItemOrdered { get; set; }
 
+        [Column(TypeName ="money")]
         public decimal Price { get; set; }
 
         public int Quantity { get; set; }
